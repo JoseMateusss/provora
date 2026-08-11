@@ -66,14 +66,16 @@ class GenerateQuestionsJob implements ShouldQueue
             $validCount = count($validQuestions);
 
             DB::transaction(function () use ($batch, $validQuestions, $validCount) {
-                foreach ($validQuestions as $q) {
+                foreach ($validQuestions as $index => $q) {
                     $batch->questions()->create([
                         'user_id' => $batch->user_id,
                         'statement' => $q['statement'],
-                        'options' => $q['options'],
-                        'correct_option' => $q['correct_option'],
+                        'alternatives' => $q['options'] ?? $q['alternatives'] ?? [],
+                        'correct_alternative' => $q['correct_option'] ?? $q['correct_alternative'] ?? 'A',
                         'explanation' => $q['explanation'],
-                        'status' => 'generated',
+                        'difficulty' => $q['difficulty'] ?? $batch->difficulty,
+                        'status' => 'draft',
+                        'order' => $index + 1,
                     ]);
                 }
 

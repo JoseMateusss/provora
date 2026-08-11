@@ -12,25 +12,33 @@ class Question extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'batch_id',
+        'question_batch_id',
         'user_id',
         'statement',
-        'options',
-        'correct_option',
+        'alternatives',
+        'correct_alternative',
         'explanation',
+        'difficulty',
         'status',
+        'order',
     ];
 
     protected function casts(): array
     {
         return [
-            'options' => 'array',
+            'alternatives' => 'array',
+            'order' => 'integer',
         ];
     }
 
     public function batch(): BelongsTo
     {
-        return $this->belongsTo(QuestionBatch::class, 'batch_id');
+        return $this->belongsTo(QuestionBatch::class, 'question_batch_id');
+    }
+
+    public function questionBatch(): BelongsTo
+    {
+        return $this->belongsTo(QuestionBatch::class, 'question_batch_id');
     }
 
     public function user(): BelongsTo

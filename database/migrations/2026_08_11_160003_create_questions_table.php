@@ -10,14 +10,18 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('batch_id')->constrained('question_batches')->onDelete('cascade');
+            $table->foreignUuid('question_batch_id')->constrained('question_batches')->onDelete('cascade');
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->text('statement');
-            $table->json('options');
-            $table->string('correct_option', 10);
+            $table->json('alternatives');
+            $table->char('correct_alternative', 1);
             $table->text('explanation')->nullable();
-            $table->enum('status', ['generated', 'edited', 'deleted'])->default('generated');
+            $table->enum('difficulty', ['facil', 'medio', 'dificil'])->default('medio');
+            $table->enum('status', ['draft', 'edited', 'approved', 'deleted'])->default('draft');
+            $table->integer('order')->default(1);
             $table->timestamps();
+
+            $table->index('question_batch_id');
         });
     }
 

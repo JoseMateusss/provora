@@ -35,7 +35,13 @@ class QuestionBatch extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class, 'batch_id');
+        return $this->hasMany(Question::class, 'question_batch_id');
+    }
+
+    public function activeQuestions(): HasMany
+    {
+        return $this->hasMany(Question::class, 'question_batch_id')
+            ->where('status', '!=', 'deleted');
     }
 
     public function exports(): HasMany

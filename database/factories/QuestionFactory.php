@@ -17,21 +17,23 @@ class QuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            'batch_id' => QuestionBatch::factory(),
+            'question_batch_id' => QuestionBatch::factory(),
             'user_id' => function (array $attributes) {
-                return QuestionBatch::find($attributes['batch_id'])?->user_id ?? User::factory();
+                return QuestionBatch::find($attributes['question_batch_id'] ?? null)?->user_id ?? User::factory();
             },
             'statement' => $this->faker->paragraph(),
-            'options' => [
+            'alternatives' => [
                 ['letter' => 'A', 'text' => $this->faker->sentence()],
                 ['letter' => 'B', 'text' => $this->faker->sentence()],
                 ['letter' => 'C', 'text' => $this->faker->sentence()],
                 ['letter' => 'D', 'text' => $this->faker->sentence()],
                 ['letter' => 'E', 'text' => $this->faker->sentence()],
             ],
-            'correct_option' => 'A',
+            'correct_alternative' => 'A',
             'explanation' => $this->faker->paragraph(),
-            'status' => 'generated',
+            'difficulty' => 'medio',
+            'status' => 'draft',
+            'order' => 1,
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\DocumentController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\QuestionBatchController;
+use App\Http\Controllers\Api\V1\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -26,5 +27,6 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('documents', DocumentController::class)->only(['index', 'store', 'show', 'destroy']);
         Route::post('question-batches', [QuestionBatchController::class, 'store'])->middleware('throttle:10,1');
         Route::apiResource('question-batches', QuestionBatchController::class)->only(['index', 'show', 'destroy']);
+        Route::apiResource('questions', QuestionController::class)->only(['show', 'update', 'destroy']);
     });
 });

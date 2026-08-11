@@ -19,12 +19,16 @@ class QuestionResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'question_batch_id' => $this->question_batch_id,
             'statement' => $this->statement,
-            'options' => $this->options,
-            'correct_option' => $this->correct_option,
+            'alternatives' => $this->alternatives,
+            'correct_alternative' => $this->correct_alternative,
             'explanation' => $this->explanation,
+            'difficulty' => $this->difficulty,
             'status' => $this->status,
+            'order' => $this->order,
             'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
 }
