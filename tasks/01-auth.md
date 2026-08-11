@@ -4,18 +4,18 @@ Referências obrigatórias: `PRD.md`, `specs/00-architecture.md`, `specs/01-auth
 
 ## Implementação
 
-- [ ] Configurar Laravel Sanctum para autenticação via Bearer Token.
-- [ ] Ajustar `users` para UUID.
-- [ ] Criar campos `plan`, `questions_generated_this_month` e identificador nullable do gateway.
-- [ ] Criar Form Requests de registro e login.
-- [ ] Implementar registro.
-- [ ] Implementar login.
-- [ ] Implementar logout revogando somente o token atual.
-- [ ] Implementar `/api/v1/auth/me`.
-- [ ] Criar Resource para respostas de usuário.
-- [ ] Padronizar erros de autenticação e validação.
-- [ ] Criar Feature Tests.
-- [ ] Garantir documentação OpenAPI dos endpoints.
+- [x] Configurar Laravel Sanctum para autenticação via Bearer Token.
+- [x] Ajustar `users` para UUID.
+- [x] Criar campos `plan`, `questions_generated_this_month` e identificador nullable do gateway.
+- [x] Criar Form Requests de registro e login.
+- [x] Implementar registro.
+- [x] Implementar login.
+- [x] Implementar logout revogando somente o token atual.
+- [x] Implementar `/api/v1/auth/me`.
+- [x] Criar Resource para respostas de usuário.
+- [x] Padronizar erros de autenticação e validação.
+- [x] Criar Feature Tests.
+- [x] Garantir documentação OpenAPI dos endpoints.
 
 ## Não implementar
 
