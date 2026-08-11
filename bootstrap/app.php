@@ -46,10 +46,14 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if ($e instanceof AuthenticationException) {
+                $message = ($e->getMessage() && $e->getMessage() !== 'Unauthenticated.') 
+                    ? $e->getMessage() 
+                    : 'Não autenticado.';
+
                 return response()->json([
                     'error' => [
                         'code' => 'UNAUTHORIZED',
-                        'message' => 'Não autenticado.',
+                        'message' => $message,
                         'details' => (object) [],
                     ],
                 ], 401);

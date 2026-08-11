@@ -23,6 +23,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureRateLimiting();
+
+        if (class_exists(\Dedoc\Scramble\Scramble::class)) {
+            \Dedoc\Scramble\Scramble::afterOpenApiGenerated(function (\Dedoc\Scramble\Support\Generator\OpenApi $openApi) {
+                $openApi->secure(
+                    \Dedoc\Scramble\Support\Generator\SecurityScheme::http('bearer')
+                );
+            });
+        }
     }
 
     protected function configureRateLimiting(): void
