@@ -12,7 +12,7 @@ class Export extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'batch_id',
+        'question_batch_id',
         'user_id',
         'storage_path',
         'status',
@@ -20,7 +20,7 @@ class Export extends Model
 
     public function batch(): BelongsTo
     {
-        return $this->belongsTo(QuestionBatch::class, 'batch_id');
+        return $this->belongsTo(QuestionBatch::class, 'question_batch_id');
     }
 
     public function user(): BelongsTo

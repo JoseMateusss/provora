@@ -46,6 +46,6 @@ class QuestionBatch extends Model
 
     public function exports(): HasMany
     {
-        return $this->hasMany(Export::class);
+        return $this->hasMany(Export::class, 'question_batch_id');
     }
 }
