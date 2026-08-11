@@ -22,7 +22,19 @@ class OpenAiAdapter implements LlmProviderInterface
             throw new GenerationFailedException('OpenAI API key não configurada.');
         }
 
-        $systemPrompt = "Você é um especialista em elaboração de questões do ENEM. Gere {$payload->requestedCount} questões inéditas baseadas no texto fornecido, na área de {$payload->knowledgeArea}. Retorne estritamente um JSON com a chave 'questions' contendo uma lista de objetos com: 'statement' (enunciado), 'options' (mapa A, B, C, D, E), 'correct_option' (letra) e 'explanation' (gabarito comentado).";
+        $systemPrompt = config('prompts.enem_question_generator.system_prompt', "Você é um especialista em elaboração de questões do ENEM.");
+
+        $userPrompt = strtr(
+            config('prompts.enem_question_generator.user_prompt_template', "Área: :knowledge_area\nTexto: :extracted_text"),
+            [
+                ':knowledge_area' => $payload->knowledgeArea,
+                ':difficulty' => $payload->difficulty ?? 'medio',
+                ':requested_count' => (string) $payload->requestedCount,
+                ':extracted_text' => $payload->extractedText,
+            ]
+        );
+
+        $maxTokens = min(4096, max(1000, $payload->requestedCount * 600));
 
         try {
             $response = Http::withToken($this->apiKey)
@@ -31,10 +43,56 @@ class OpenAiAdapter implements LlmProviderInterface
                     'model' => $this->model,
                     'messages' => [
                         ['role' => 'system', 'content' => $systemPrompt],
-                        ['role' => 'user', 'content' => "Texto base:\n" . $payload->extractedText],
+                        ['role' => 'user', 'content' => $userPrompt],
                     ],
-                    'response_format' => ['type' => 'json_object'],
-                    'temperature' => 0.7,
+                    'response_format' => [
+                        'type' => 'json_schema',
+                        'json_schema' => [
+                            'name' => 'enem_questions_response',
+                            'strict' => true,
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'questions' => [
+                                        'type' => 'array',
+                                        'items' => [
+                                            'type' => 'object',
+                                            'properties' => [
+                                                'statement' => ['type' => 'string'],
+                                                'alternatives' => [
+                                                    'type' => 'array',
+                                                    'items' => [
+                                                        'type' => 'object',
+                                                        'properties' => [
+                                                            'letter' => ['type' => 'string'],
+                                                            'text' => ['type' => 'string'],
+                                                        ],
+                                                        'required' => ['letter', 'text'],
+                                                        'additionalProperties' => false,
+                                                    ],
+                                                ],
+                                                'correct_alternative' => ['type' => 'string'],
+                                                'explanation' => ['type' => 'string'],
+                                                'difficulty' => ['type' => 'string'],
+                                            ],
+                                            'required' => [
+                                                'statement',
+                                                'alternatives',
+                                                'correct_alternative',
+                                                'explanation',
+                                                'difficulty',
+                                            ],
+                                            'additionalProperties' => false,
+                                        ],
+                                    ],
+                                ],
+                                'required' => ['questions'],
+                                'additionalProperties' => false,
+                            ],
+                        ],
+                    ],
+                    'temperature' => 1,
+                    'max_completion_tokens' => $maxTokens,
                 ]);
 
             if ($response->failed()) {

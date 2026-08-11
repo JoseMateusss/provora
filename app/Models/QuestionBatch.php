@@ -20,6 +20,7 @@ class QuestionBatch extends Model
         'requested_count',
         'generated_count',
         'status',
+        'error_message',
     ];
 
     public function user(): BelongsTo
@@ -34,7 +35,7 @@ class QuestionBatch extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(Question::class, 'batch_id');
     }
 
     public function exports(): HasMany

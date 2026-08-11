@@ -17,7 +17,10 @@ return new class extends Migration
             $table->integer('requested_count');
             $table->integer('generated_count')->default(0);
             $table->enum('status', ['processing', 'completed', 'partial', 'failed'])->default('processing');
+            $table->text('error_message')->nullable();
             $table->timestamps();
+
+            $table->index(['user_id', 'created_at']);
         });
     }
 

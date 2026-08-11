@@ -22,7 +22,19 @@ class AnthropicAdapter implements LlmProviderInterface
             throw new GenerationFailedException('Anthropic API key não configurada.');
         }
 
-        $systemPrompt = "Você é um especialista em elaboração de questões do ENEM. Gere {$payload->requestedCount} questões inéditas baseadas no texto fornecido, na área de {$payload->knowledgeArea}. Retorne estritamente um objeto JSON com a chave 'questions' contendo a lista de objetos com: 'statement', 'options' (A, B, C, D, E), 'correct_option' e 'explanation'.";
+        $systemPrompt = config('prompts.enem_question_generator.system_prompt', "Você é um especialista em elaboração de questões do ENEM.");
+
+        $userPrompt = strtr(
+            config('prompts.enem_question_generator.user_prompt_template', "Área: :knowledge_area\nTexto: :extracted_text"),
+            [
+                ':knowledge_area' => $payload->knowledgeArea,
+                ':difficulty' => $payload->difficulty ?? 'medio',
+                ':requested_count' => (string) $payload->requestedCount,
+                ':extracted_text' => $payload->extractedText,
+            ]
+        );
+
+        $maxTokens = min(4096, max(1000, $payload->requestedCount * 600));
 
         try {
             $response = Http::withHeaders([
@@ -33,10 +45,11 @@ class AnthropicAdapter implements LlmProviderInterface
                 ->timeout(120)
                 ->post('https://api.anthropic.com/v1/messages', [
                     'model' => $this->model,
-                    'max_tokens' => 4096,
+                    'max_tokens' => $maxTokens,
+                    'temperature' => 0.3,
                     'system' => $systemPrompt,
                     'messages' => [
-                        ['role' => 'user', 'content' => "Texto base:\n" . $payload->extractedText],
+                        ['role' => 'user', 'content' => $userPrompt],
                     ],
                 ]);
 
