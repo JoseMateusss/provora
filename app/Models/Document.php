@@ -14,11 +14,21 @@ class Document extends Model
 
     protected $fillable = [
         'user_id',
-        'original_name',
+        'original_filename',
         'storage_path',
         'extracted_text',
+        'error_message',
         'status',
     ];
+
+    public function getTextPreviewAttribute(): ?string
+    {
+        if ($this->extracted_text === null) {
+            return null;
+        }
+
+        return mb_substr($this->extracted_text, 0, 500);
+    }
 
     public function user(): BelongsTo
     {

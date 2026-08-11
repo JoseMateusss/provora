@@ -11,10 +11,11 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('original_name');
+            $table->string('original_filename');
             $table->string('storage_path');
-            $table->longText('extracted_text')->nullable();
             $table->enum('status', ['pending', 'processing', 'extracted', 'failed'])->default('pending');
+            $table->longText('extracted_text')->nullable();
+            $table->text('error_message')->nullable();
             $table->timestamps();
         });
     }

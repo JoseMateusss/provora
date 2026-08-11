@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\LogoutController;
 use App\Http\Controllers\Api\V1\Auth\MeController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
+use App\Http\Controllers\Api\V1\DocumentController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,5 +19,9 @@ Route::prefix('v1')->group(function () {
             Route::post('/logout', LogoutController::class);
             Route::get('/me', MeController::class);
         });
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('documents', DocumentController::class)->only(['index', 'store', 'show', 'destroy']);
     });
 });

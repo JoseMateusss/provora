@@ -63,7 +63,7 @@ O Job deve:
 
 1. Recuperar texto extraído.
 2. Montar prompt versionado.
-3. Chamar API Anthropic.
+3. Chamar API OpenAI.
 4. Receber saída estruturada.
 5. Validar cada questão.
 6. Persistir itens válidos.
